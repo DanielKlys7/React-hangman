@@ -7,6 +7,7 @@ class App extends Component {
     wordPlaceholders: [],
     isGameWon: false,
     triedLetters: [],
+    hangmanCounter: 0,
   }
 
   keypressCheckFunction = (parseLetter) => {
@@ -28,7 +29,9 @@ class App extends Component {
         this.setState({ triedLetters: arr })
       }
     })
-
+    if (!this.state.word.includes(parseLetter)) {
+      this.setState({ hangmanCounter: this.state.hangmanCounter + 1 })
+    }
   }
 
   handleWordPlaceholders = () => {
@@ -42,9 +45,9 @@ class App extends Component {
         wordPlaceholders.push('-')
       }
     })
-    this.setState({
+    this.setState((prevState) => ({
       wordPlaceholders: wordPlaceholders
-    })
+    }))
   }
 
   keypressHandler = (e) => {
@@ -134,7 +137,7 @@ class App extends Component {
   }
 
   checkIfArrayEquals = (arr1, arr2) => {
-    for (let i = 0; i < arr1.length; i++) {
+    for (let i = 0; i <= arr1.length; i++) {
       if (arr1[i] !== arr2[i]) {
         return false
       }
@@ -175,8 +178,9 @@ class App extends Component {
         <div>
           {this.state.wordPlaceholders}
         </div>
-        {this.state.isGameWon && <div className="win">win</div>}
         {this.state.triedLetters.length > 0 && <p>You already tried: {this.state.triedLetters.join(', ')}</p>}
+        {(this.state.hangmanCounter >= 12 && !this.state.isGameWon) && <p className="result lose">Lose :(</p>}
+        {this.state.isGameWon && <p className="result win">Win!</p>}
       </>
     );
   }

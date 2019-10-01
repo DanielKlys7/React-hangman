@@ -9,6 +9,12 @@ div {
   letter-spacing: 8px
 }
 
+.lose {
+  font-size: 76px;
+  letter-spacing: 8px;
+  color: red;
+}
+
 p {
   font-size: 40px;
   letter-spacing: 4px;
