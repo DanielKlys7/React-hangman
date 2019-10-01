@@ -21,16 +21,21 @@ class App extends Component {
             wordPlaceholders: arrayToUpdate,
           })
         })
-      } else {
-        let arr = [...this.state.triedLetters]
-        if (!arr.includes(parseLetter)) {
-          arr.push(parseLetter)
-        }
-        this.setState({ triedLetters: arr })
       }
     })
     if (!this.state.word.includes(parseLetter)) {
-      this.setState({ hangmanCounter: this.state.hangmanCounter + 1 })
+      this.setState((prevState) => {
+        let triedLetters = [...this.state.triedLetters];
+        if (!triedLetters.includes(parseLetter)) {
+          triedLetters.push(parseLetter)
+        }
+        return (
+          {
+            triedLetters,
+            hangmanCounter: prevState.hangmanCounter + 1,
+          }
+        )
+      })
     }
   }
 
