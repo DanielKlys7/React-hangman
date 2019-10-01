@@ -5,14 +5,14 @@ class App extends Component {
   state = {
     word: [],
     wordPlaceholders: [],
-    wordRemove: [],
+    isGameWon: false,
   }
 
   keypressCheckFunction = (parseLetter) => {
     this.state.word.forEach((letter, index) => {
       if (parseLetter === letter) {
         console.log(letter, index)
-        this.setState(() => {
+        this.setState((prevState) => {
           let arrayToUpdate = [...this.state.wordPlaceholders];
           arrayToUpdate.splice(index, 1, letter)
           return ({
@@ -125,7 +125,16 @@ class App extends Component {
     }
   }
 
-  componentDidMount() {
+  checkIfArrayEquals = (arr1, arr2) => {
+    for (let i = 0; i < arr1.length; i++) {
+      if (arr1[i] !== arr2[i]) {
+        return false
+      }
+    }
+    return true
+  }
+
+  componentDidMount = () => {
     fetch("https://wordsapiv1.p.rapidapi.com/words/?random=true", {
       "method": "GET",
       "headers": {
@@ -140,18 +149,27 @@ class App extends Component {
         this.setState({ word: data.word.split('') });
       })
       .then((data) => {
-        this.setState({ wordRemove: this.state.word })
         this.handleWordPlaceholders()
+
       })
     document.addEventListener("keydown", this.keypressHandler)
 
   }
 
+  componentDidUpdate = () => {
+    if ((this.checkIfArrayEquals(this.state.word, this.state.wordPlaceholders)) && (!this.state.isGameWon)) {
+      this.setState((prevState) => ({ isGameWon: !prevState.isGameWon }))
+    }
+  }
+
   render() {
     return (
-      <div>
-        {this.state.wordPlaceholders}
-      </div>
+      <>
+        <div>
+          {this.state.wordPlaceholders}
+        </div>
+        {this.state.isGameWon && <div className="win">win</div>}
+      </>
     );
   }
 }
