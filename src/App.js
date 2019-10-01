@@ -6,6 +6,7 @@ class App extends Component {
     word: [],
     wordPlaceholders: [],
     isGameWon: false,
+    triedLetters: [],
   }
 
   keypressCheckFunction = (parseLetter) => {
@@ -19,8 +20,15 @@ class App extends Component {
             wordPlaceholders: arrayToUpdate,
           })
         })
+      } else {
+        let arr = [...this.state.triedLetters]
+        if (!arr.includes(parseLetter)) {
+          arr.push(parseLetter)
+        }
+        this.setState({ triedLetters: arr })
       }
     })
+
   }
 
   handleWordPlaceholders = () => {
@@ -150,7 +158,6 @@ class App extends Component {
       })
       .then((data) => {
         this.handleWordPlaceholders()
-
       })
     document.addEventListener("keydown", this.keypressHandler)
 
@@ -169,6 +176,7 @@ class App extends Component {
           {this.state.wordPlaceholders}
         </div>
         {this.state.isGameWon && <div className="win">win</div>}
+        {this.state.triedLetters.length > 0 && <p>You already tried: {this.state.triedLetters.join(', ')}</p>}
       </>
     );
   }

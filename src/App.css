@@ -2,3 +2,14 @@ div {
   letter-spacing: 20px;
   font-size: 40px;
 }
+
+.win {
+  font-size: 76px;
+  color: lightgreen;
+  letter-spacing: 8px
+}
+
+p {
+  font-size: 40px;
+  letter-spacing: 4px;
+}
