@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import './App.css';
+import './App.sass';
+import Letter from '../Letter/Letter'
+import Hangman from '../Hangman/Hangman'
 
 class App extends Component {
   state = {
@@ -99,14 +101,15 @@ class App extends Component {
   }
 
   render() {
+    const letters = [...this.state.wordPlaceholders].map(letter => <Letter letter={letter} />)
     return (
       <>
-        <div>
-          {this.state.wordPlaceholders}
+        <Hangman counter={this.state.hangmanCounter} />
+        <div className="bootstrap">
+          <div className="bootstrap__letters">
+            {letters}
+          </div>
         </div>
-        {this.state.triedLetters.length > 0 && <p>You already tried: {this.state.triedLetters.join(', ')}</p>}
-        {(this.state.hangmanCounter >= 12 && !this.state.isGameWon) && <p className="result lose">Lose :(</p>}
-        {this.state.isGameWon && <p className="result win">Win!</p>}
       </>
     );
   }
