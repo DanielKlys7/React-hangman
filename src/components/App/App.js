@@ -94,7 +94,6 @@ class App extends Component {
       }).then(() => {
         document.addEventListener("keydown", this.keypressHandler)
       })
-
   }
 
   handleNewWord = () => {
@@ -112,14 +111,14 @@ class App extends Component {
         this.setState({ word: data.word.split('') });
       })
       .then((data) => {
-        this.handleWordPlaceholders()
+        this.handleWordPlaceholders();
+        this.setState((prevState) => ({
+          isGameWon: false,
+          isGameEnd: false,
+          triedLetters: [],
+          hangmanCounter: 0
+        }))
       })
-    this.setState((prevState) => ({
-      isGameWon: false,
-      isGameEnd: false,
-      triedLetters: [],
-      hangmanCounter: 0
-    }))
     document.addEventListener("keydown", this.keypressHandler)
   }
 
