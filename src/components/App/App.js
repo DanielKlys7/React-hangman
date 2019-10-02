@@ -106,6 +106,9 @@ class App extends Component {
       <>
         <Hangman counter={this.state.hangmanCounter} />
         <div className="bootstrap">
+          <div className="bootstrap__tried">
+            {this.state.triedLetters.length > 0 && `You already tried: ${this.state.triedLetters.join(' ').toUpperCase()}`}
+          </div>
           <div className="bootstrap__letters">
             {letters}
           </div>
