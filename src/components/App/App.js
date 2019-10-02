@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.sass';
 import Letter from '../Letter/Letter'
 import Hangman from '../Hangman/Hangman'
+import Endscreen from '../Endscreen/Endscreen'
 
 class App extends Component {
   state = {
@@ -10,6 +11,7 @@ class App extends Component {
     isGameWon: false,
     triedLetters: [],
     hangmanCounter: 0,
+    isGameEnd: false,
   }
 
   keypressCheckFunction = (parseLetter) => {
@@ -89,14 +91,45 @@ class App extends Component {
       })
       .then((data) => {
         this.handleWordPlaceholders()
+      }).then(() => {
+        document.addEventListener("keydown", this.keypressHandler)
       })
-    document.addEventListener("keydown", this.keypressHandler)
 
+  }
+
+  handleNewWord = () => {
+    fetch("https://wordsapiv1.p.rapidapi.com/words/?random=true", {
+      "method": "GET",
+      "headers": {
+        "x-rapidapi-host": "wordsapiv1.p.rapidapi.com",
+        "x-rapidapi-key": "07dcb06ec7msh4bac7eab1a6edc2p18a2d1jsna30d60c1654b"
+      }
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        this.setState({ word: data.word.split('') });
+      })
+      .then((data) => {
+        this.handleWordPlaceholders()
+      })
+    this.setState((prevState) => ({
+      isGameWon: false,
+      isGameEnd: false,
+      triedLetters: [],
+      hangmanCounter: 0
+    }))
+    document.addEventListener("keydown", this.keypressHandler)
   }
 
   componentDidUpdate = () => {
     if ((this.checkIfArrayEquals(this.state.word, this.state.wordPlaceholders)) && (!this.state.isGameWon)) {
       this.setState((prevState) => ({ isGameWon: !prevState.isGameWon }))
+    }
+    if ((this.state.isGameWon || (!this.state.isGameEnd && this.state.hangmanCounter >= 12)) && !this.state.isGameEnd) {
+      this.setState((prevState) => ({ isGameEnd: !prevState.isGameEnd }))
+      document.addEventListener("keydown", this.keypressHandler)
     }
   }
 
@@ -104,6 +137,7 @@ class App extends Component {
     const letters = [...this.state.wordPlaceholders].map(letter => <Letter letter={letter} />)
     return (
       <>
+        {this.state.isGameEnd && <Endscreen isGameWon={this.state.isGameWon} handleNewWord={this.handleNewWord} />}
         <Hangman counter={this.state.hangmanCounter} />
         <div className="bootstrap">
           <div className="bootstrap__tried">
