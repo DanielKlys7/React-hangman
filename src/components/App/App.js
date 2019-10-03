@@ -17,9 +17,8 @@ class App extends Component {
   keypressCheckFunction = (parseLetter) => {
     this.state.word.forEach((letter, index) => {
       if (parseLetter === letter) {
-        console.log(letter, index)
-        this.setState((prevState) => {
-          let arrayToUpdate = [...this.state.wordPlaceholders];
+        this.setState(() => {
+          const arrayToUpdate = [...this.state.wordPlaceholders];
           arrayToUpdate.splice(index, 1, letter)
           return ({
             wordPlaceholders: arrayToUpdate,
@@ -29,7 +28,7 @@ class App extends Component {
     })
     if (!this.state.word.includes(parseLetter)) {
       this.setState((prevState) => {
-        let triedLetters = [...this.state.triedLetters];
+        const triedLetters = [...this.state.triedLetters];
         if (!triedLetters.includes(parseLetter)) {
           triedLetters.push(parseLetter)
         }
@@ -43,10 +42,18 @@ class App extends Component {
     }
   }
 
+  keypressHandler = (e) => {
+    let regex = /^[a-z]$/i;
+    if (regex.test(e.key)) {
+      this.keypressCheckFunction(e.key)
+    }
+  }
+
   handleWordPlaceholders = () => {
     let wordPlaceholders = [];
+    let regex = /^[a-z]$/i;
     this.state.word.forEach((sign) => {
-      if ("abcdefghijklmnopqrstuvwxyz".split('').includes(sign)) {
+      if (regex.test(sign)) {
         wordPlaceholders.push('_');
       } else if (sign === " ") {
         wordPlaceholders.push(' ');
@@ -59,13 +66,6 @@ class App extends Component {
     }))
   }
 
-  keypressHandler = (e) => {
-    let regex = /^[a-z]$/i;
-    if (regex.test(e.key)) {
-      this.keypressCheckFunction(e.key)
-    }
-  }
-
   checkIfArrayEquals = (arr1, arr2) => {
     for (let i = 0; i <= arr1.length; i++) {
       if (arr1[i] !== arr2[i]) {
@@ -75,33 +75,14 @@ class App extends Component {
     return true
   }
 
-  componentDidMount = () => {
-    fetch("https://wordsapiv1.p.rapidapi.com/words/?random=true", {
-      "method": "GET",
-      "headers": {
-        "x-rapidapi-host": "wordsapiv1.p.rapidapi.com",
-        "x-rapidapi-key": "07dcb06ec7msh4bac7eab1a6edc2p18a2d1jsna30d60c1654b"
-      }
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        this.setState({ word: data.word.split('') });
-      })
-      .then((data) => {
-        this.handleWordPlaceholders()
-      }).then(() => {
-        document.addEventListener("keydown", this.keypressHandler)
-      })
-  }
-
   handleNewWord = () => {
+    const apiKey = "07dcb06ec7msh4bac7eab1a6edc2p18a2d1jsna30d60c1654b";
+
     fetch("https://wordsapiv1.p.rapidapi.com/words/?random=true", {
       "method": "GET",
       "headers": {
         "x-rapidapi-host": "wordsapiv1.p.rapidapi.com",
-        "x-rapidapi-key": "07dcb06ec7msh4bac7eab1a6edc2p18a2d1jsna30d60c1654b"
+        "x-rapidapi-key": apiKey,
       }
     })
       .then((response) => {
@@ -118,8 +99,14 @@ class App extends Component {
           triedLetters: [],
           hangmanCounter: 0
         }))
+      }).then(() => {
+        document.addEventListener("keydown", this.keypressHandler)
       })
-    document.addEventListener("keydown", this.keypressHandler)
+
+  }
+
+  componentDidMount = () => {
+    this.handleNewWord()
   }
 
   componentDidUpdate = () => {
@@ -132,8 +119,9 @@ class App extends Component {
     }
   }
 
+
+
   render() {
-    const letters = [...this.state.wordPlaceholders].map(letter => <Letter letter={letter} />)
     return (
       <>
         {this.state.isGameEnd && <Endscreen isGameWon={this.state.isGameWon} handleNewWord={this.handleNewWord} />}
@@ -143,7 +131,7 @@ class App extends Component {
             {this.state.triedLetters.length > 0 && `You already tried: ${this.state.triedLetters.join(' ').toUpperCase()}`}
           </div>
           <div className="bootstrap__letters">
-            {letters}
+            {this.state.wordPlaceholders.map(letter => <Letter letter={letter} />)}
           </div>
         </div>
       </>
