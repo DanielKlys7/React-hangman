@@ -115,11 +115,9 @@ class App extends Component {
     }
     if ((this.state.isGameWon || (!this.state.isGameEnd && this.state.hangmanCounter >= 12)) && !this.state.isGameEnd) {
       this.setState((prevState) => ({ isGameEnd: !prevState.isGameEnd }))
-      document.addEventListener("keydown", this.keypressHandler)
+      document.removeEventListener("keydown", this.keypressHandler)
     }
   }
-
-
 
   render() {
     return (
@@ -131,7 +129,7 @@ class App extends Component {
             {this.state.triedLetters.length > 0 && `You already tried: ${this.state.triedLetters.join(' ').toUpperCase()}`}
           </div>
           <div className="bootstrap__letters">
-            {this.state.wordPlaceholders.map(letter => <Letter letter={letter} />)}
+            {this.state.wordPlaceholders.map((letter, index) => <Letter letter={letter} key={index} />)}
           </div>
         </div>
       </>
