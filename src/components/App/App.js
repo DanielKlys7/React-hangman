@@ -12,6 +12,55 @@ class App extends Component {
     triedLetters: [],
     hangmanCounter: 0,
     isGameEnd: false,
+    hangmanParts: [{
+      name: "bar",
+      number: 1
+    },
+    {
+      name: "head",
+      number: 2
+    },
+    {
+      name: "neck",
+      number: 3
+    },
+    {
+      name: "corpus",
+      number: 4
+    },
+    {
+      name: "leftarm",
+      number: 5
+    },
+    {
+      name: "rightarm",
+      number: 6
+    },
+    {
+      name: "lefthand",
+      number: 7
+    },
+    {
+      name: "righthand",
+      number: 8
+    },
+    {
+      name: "leftleg",
+      number: 9
+    },
+    {
+      name: "rightleg",
+      number: 10
+    },
+    {
+      name: "leftfoot",
+      number: 11
+    },
+    {
+      name: "rightfoot",
+      number: 12
+    },
+    ]
   }
 
   keypressCheckFunction = (parseLetter) => {
@@ -123,7 +172,7 @@ class App extends Component {
     return (
       <>
         {this.state.isGameEnd && <Endscreen isGameWon={this.state.isGameWon} handleNewWord={this.handleNewWord} />}
-        <Hangman counter={this.state.hangmanCounter} />
+        <Hangman counter={this.state.hangmanCounter} hangman={this.state.hangmanParts} />
         <div className="bootstrap">
           <div className="bootstrap__tried">
             {this.state.triedLetters.length > 0 && `You already tried: ${this.state.triedLetters.join(' ').toUpperCase()}`}
