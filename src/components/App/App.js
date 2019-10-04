@@ -64,12 +64,11 @@ class App extends Component {
   }
 
   wordSplice = (parseLetter, letter, index) => {
+    const arrToUpdate = [...this.state.wordPlaceholders]
     if (parseLetter === letter) {
-      const arrToUpdate = [...this.state.wordPlaceholders]
       arrToUpdate.splice(index, 1, letter)
       return arrToUpdate
     } else {
-      const arrToUpdate = [...this.state.wordPlaceholders]
       return arrToUpdate
     }
   }
@@ -89,14 +88,10 @@ class App extends Component {
       })
     })
     if (!this.state.word.includes(parseLetter)) {
-      this.setState((prevState) => {
-        return (
-          {
-            triedLetters: this.handleTriedLetters(parseLetter),
-            hangmanCounter: prevState.hangmanCounter + 1,
-          }
-        )
-      })
+      this.setState(prevState => ({
+        triedLetters: this.handleTriedLetters(parseLetter),
+        hangmanCounter: prevState.hangmanCounter + 1
+      }))
     }
   }
 
@@ -109,9 +104,9 @@ class App extends Component {
 
   handleWordPlaceholders = () => {
     let wordPlaceholders = [];
-    let regex = /^[a-z]$/i;
+    let alphabetSign = /^[a-z]$/i;
     this.state.word.forEach((sign) => {
-      if (regex.test(sign)) {
+      if (alphabetSign.test(sign)) {
         wordPlaceholders.push('_');
       } else if (sign === " ") {
         wordPlaceholders.push(' ');
@@ -147,16 +142,16 @@ class App extends Component {
         return response.json();
       })
       .then((data) => {
-        this.setState({ word: data.word.split('') });
-      })
-      .then((data) => {
-        this.handleWordPlaceholders();
-        this.setState((prevState) => ({
+        this.setState({
+          word: data.word.split(''),
           isGameWon: false,
           isGameEnd: false,
           triedLetters: [],
           hangmanCounter: 0
-        }))
+        });
+      })
+      .then(() => {
+        this.handleWordPlaceholders();
       }).then(() => {
         document.addEventListener("keydown", this.keypressHandler)
       })
@@ -169,10 +164,12 @@ class App extends Component {
 
   componentDidUpdate = () => {
     if ((this.checkIfArrayEquals(this.state.word, this.state.wordPlaceholders)) && (!this.state.isGameWon)) {
-      this.setState((prevState) => ({ isGameWon: !prevState.isGameWon }))
+      this.setState(() => ({
+        isGameWon: true
+      }))
     }
     if ((this.state.isGameWon || (!this.state.isGameEnd && this.state.hangmanCounter >= 12)) && !this.state.isGameEnd) {
-      this.setState((prevState) => ({ isGameEnd: !prevState.isGameEnd }))
+      this.setState(() => ({ isGameEnd: true }))
       document.removeEventListener("keydown", this.keypressHandler)
     }
   }
