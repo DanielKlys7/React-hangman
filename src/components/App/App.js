@@ -109,6 +109,7 @@ class App extends Component {
 
   componentDidUpdate = () => {
     const { word, wordPlaceholders, isGameWon, isGameEnd, hangmanCounter } = this.state
+
     if ((checkIfArrayEquals(word, wordPlaceholders)) && (!isGameWon)) {
       this.setState(() => ({
         isGameWon: true
