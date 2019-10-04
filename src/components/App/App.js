@@ -63,27 +63,36 @@ class App extends Component {
     ]
   }
 
+  wordSplice = (parseLetter, letter, index) => {
+    if (parseLetter === letter) {
+      const arrToUpdate = [...this.state.wordPlaceholders]
+      arrToUpdate.splice(index, 1, letter)
+      return arrToUpdate
+    } else {
+      const arrToUpdate = [...this.state.wordPlaceholders]
+      return arrToUpdate
+    }
+  }
+
+  handleTriedLetters = (parseLetter) => {
+    const triedLetters = [...this.state.triedLetters];
+    if (!triedLetters.includes(parseLetter)) {
+      triedLetters.push(parseLetter)
+    }
+    return triedLetters;
+  }
+
   keypressCheckFunction = (parseLetter) => {
     this.state.word.forEach((letter, index) => {
-      if (parseLetter === letter) {
-        this.setState(() => {
-          const arrayToUpdate = [...this.state.wordPlaceholders];
-          arrayToUpdate.splice(index, 1, letter)
-          return ({
-            wordPlaceholders: arrayToUpdate,
-          })
-        })
-      }
+      this.setState({
+        wordPlaceholders: this.wordSplice(parseLetter, letter, index),
+      })
     })
     if (!this.state.word.includes(parseLetter)) {
       this.setState((prevState) => {
-        const triedLetters = [...this.state.triedLetters];
-        if (!triedLetters.includes(parseLetter)) {
-          triedLetters.push(parseLetter)
-        }
         return (
           {
-            triedLetters,
+            triedLetters: this.handleTriedLetters(parseLetter),
             hangmanCounter: prevState.hangmanCounter + 1,
           }
         )
@@ -171,8 +180,10 @@ class App extends Component {
   render() {
     return (
       <>
-        {this.state.isGameEnd && <Endscreen isGameWon={this.state.isGameWon} handleNewWord={this.handleNewWord} />}
-        <Hangman counter={this.state.hangmanCounter} hangman={this.state.hangmanParts} />
+        <Hangman
+          counter={this.state.hangmanCounter}
+          hangman={this.state.hangmanParts}
+        />
         <div className="bootstrap">
           <div className="bootstrap__tried">
             {this.state.triedLetters.length > 0 && `You already tried: ${this.state.triedLetters.join(' ').toUpperCase()}`}
@@ -181,6 +192,7 @@ class App extends Component {
             {this.state.wordPlaceholders.map((letter, index) => <Letter letter={letter} key={index} />)}
           </div>
         </div>
+        {this.state.isGameEnd && <Endscreen isGameWon={this.state.isGameWon} handleNewWord={this.handleNewWord} />}
       </>
     );
   }
